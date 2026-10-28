@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+
+- Mỗi lần chỉ bắt tay vào đúng một task.
+- Làm xong task hiện tại thì đối chiếu với điều kiện hoàn thành của task đó
+- Thỏa điều kiện hoàn thành thì dừng. Không tự đi tiếp task sau
+- Không thêm chức năng không được yêu cầu.
+- Khi đang ở nhánh main, không sửa file. Hãy nhắc nhở việc tạo nhánh mới trước khi thực hiện
+
