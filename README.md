@@ -3,7 +3,7 @@
 - Nhóm: (số nhóm và các thành viên)
 - Chủ đề: (một câu)
 - Khách hàng: (khách hàng trong danh sách chủ đề)
-- Thao tác trình bày: "Bấm 〇〇 thì △△"
+- Thao tác trình bày: "Mở thực đơn thấy món bằng emoji và màu, không có ảnh. Chọn size M và trân châu thì giá tạm tính cộng 10.000đ; bấm thêm thì món vào giỏ. Bấm món «Hết» thì giỏ không đổi. Nhập tên và số bàn, bấm đặt thì thấy đơn «Chờ pha». Sang Quầy bấm chuyển một lần thì thành «Đang pha»; bấm hủy trên trang đơn thì trạng thái không đổi. Tải lại trang thì đơn vẫn còn."
 
 ## Cách chạy
 
