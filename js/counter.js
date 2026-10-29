@@ -1,6 +1,13 @@
 const ORDERS_KEY = "coffee-orders";
 
-const STATUS_FLOW = ["Chờ pha", "Đang pha", "Sẵn sàng", "Đã nhận"];
+const STATUS_FLOW = ["調理待ち", "調理中", "受取可能", "受取済み"];
+const ADVANCE_LABEL = {
+  "調理待ち": "調理を始める",
+  "調理中": "受取可能にする",
+  "受取可能": "受取済みにする",
+  "受取済み": "受取済み",
+  "キャンセル済み": "キャンセル済み",
+};
 
 function formatVnd(amount) {
   return amount.toLocaleString("vi-VN") + "đ";
@@ -39,7 +46,7 @@ function nextStatus(current) {
 function advanceOrder(orderId) {
   const orders = loadOrders();
   const order = orders.find((item) => item.id === orderId);
-  if (!order || order.status === "Đã hủy") return;
+  if (!order || order.status === "キャンセル済み" || order.status === "受取済み") return;
   order.status = nextStatus(order.status);
   saveOrders(orders);
   renderCounter();
@@ -50,7 +57,7 @@ function renderCounter() {
   const orders = loadOrders();
 
   if (!orders.length) {
-    root.innerHTML = '<p class="cart-empty">Chưa có đơn nào.</p>';
+    root.innerHTML = '<p class="cart-empty">注文はまだありません。</p>';
     return;
   }
 
@@ -64,13 +71,13 @@ function renderCounter() {
               const toppings = Array.isArray(line.toppings) ? line.toppings : [];
               const toppingText = toppings.length
                 ? toppings.join(", ")
-                : "không topping";
+                : "トッピングなし";
               return `
                 <li class="cart-line">
                   <div class="cart-line-main">
                     <div>
                       <p class="cart-line-title">${escapeHtml(line.emoji)} ${escapeHtml(line.name)}</p>
-                      <p class="cart-line-meta">Size ${escapeHtml(line.size)} · ${escapeHtml(toppingText)}</p>
+                      <p class="cart-line-meta">サイズ ${escapeHtml(line.size)} · ${escapeHtml(toppingText)}</p>
                     </div>
                     <div class="cart-line-price">${formatVnd(line.price)}</div>
                   </div>
@@ -82,17 +89,22 @@ function renderCounter() {
           return `
             <article class="order-card">
               <div class="order-head">
-                <p class="order-code">Mã đơn <strong>${escapeHtml(order.id)}</strong></p>
+                <p class="order-code">注文番号 <strong>${escapeHtml(order.id)}</strong></p>
                 <p class="status-badge">${escapeHtml(order.status)}</p>
               </div>
-              <p class="order-meta">${escapeHtml(order.customerName)} · Bàn ${escapeHtml(order.tableNumber)}</p>
+              <p class="order-meta">${escapeHtml(order.customerName)} · テーブル ${escapeHtml(order.tableNumber)}</p>
               <ul class="cart-list">${list}</ul>
               <div class="cart-total">
-                <span>Tổng tiền</span>
+                <span>合計</span>
                 <strong>${formatVnd(order.total)}</strong>
               </div>
-              <button type="button" class="btn-advance" data-advance="${escapeHtml(order.id)}">
-                Chuyển trạng thái
+              <button
+                type="button"
+                class="btn-advance"
+                data-advance="${escapeHtml(order.id)}"
+                ${order.status === "受取済み" || order.status === "キャンセル済み" ? "disabled" : ""}
+              >
+                ${escapeHtml(ADVANCE_LABEL[order.status] || order.status)}
               </button>
             </article>
           `;

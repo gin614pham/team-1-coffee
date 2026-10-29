@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Thực đơn — Quán cà phê</title>
+  <title>メニュー — カフェ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
@@ -12,27 +12,27 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Thực đơn</h1>
-      <p>Chọn size và topping, thêm vào giỏ, rồi nhập tên và số bàn để đặt.</p>
+      <h1>メニュー</h1>
+      <p>サイズとトッピングを選び、カートに入れて、お名前とテーブル番号を入力して注文してください。</p>
     </header>
 
     <div class="layout">
-      <section class="menu" id="menu" aria-label="Danh sách món"></section>
-      <aside class="cart" aria-label="Giỏ hàng">
-        <h2>Giỏ hàng</h2>
+      <section class="menu" id="menu" aria-label="メニュー"></section>
+      <aside class="cart" aria-label="カート">
+        <h2>カート</h2>
         <div id="cart-content"></div>
         <form id="order-form" class="order-form">
-          <h2>Đặt món</h2>
+          <h2>注文</h2>
           <label class="field">
-            Tên người gọi
+            お名前
             <input id="customer-name" name="customerName" type="text" autocomplete="name" />
           </label>
           <label class="field">
-            Số bàn
+            テーブル番号
             <input id="table-number" name="tableNumber" type="text" inputmode="numeric" autocomplete="off" />
           </label>
           <p id="order-error" class="order-error" hidden></p>
-          <button type="submit" class="btn-order">Đặt</button>
+          <button type="submit" class="btn-order">注文する</button>
         </form>
       </aside>
     </div>

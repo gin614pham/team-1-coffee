@@ -1,13 +1,13 @@
 const SIZE_EXTRA = { S: 0, M: 5000, L: 10000 };
 const TOPPING_EXTRA = {
-  "trân châu": 5000,
-  "kem cheese": 10000,
+  "タピオカ": 5000,
+  "チーズクリーム": 10000,
 };
 
 const MENU = [
   {
     id: "cafe-sua",
-    name: "Cà phê sữa đá",
+    name: "アイスミルクコーヒー",
     basePrice: 25000,
     emoji: "☕",
     color: "#c4a484",
@@ -15,7 +15,7 @@ const MENU = [
   },
   {
     id: "bac-xiu",
-    name: "Bạc xỉu",
+    name: "バクシウ",
     basePrice: 30000,
     emoji: "🥛",
     color: "#f0e0c8",
@@ -23,7 +23,7 @@ const MENU = [
   },
   {
     id: "tra-dao",
-    name: "Trà đào cam sả",
+    name: "ピーチオレンジレモングラスティー",
     basePrice: 35000,
     emoji: "🍑",
     color: "#f5b895",
@@ -31,7 +31,7 @@ const MENU = [
   },
   {
     id: "matcha",
-    name: "Matcha latte",
+    name: "抹茶ラテ",
     basePrice: 42000,
     emoji: "🍵",
     color: "#a8c686",
@@ -39,7 +39,7 @@ const MENU = [
   },
   {
     id: "cacao",
-    name: "Cacao đá xay",
+    name: "ココアフラッペ",
     basePrice: 38000,
     emoji: "🍫",
     color: "#b08968",
@@ -47,7 +47,7 @@ const MENU = [
   },
   {
     id: "sinh-to-bo",
-    name: "Sinh tố bơ",
+    name: "アボカドスムージー",
     basePrice: 45000,
     emoji: "🥑",
     color: "#9ccc65",
@@ -142,31 +142,31 @@ function renderMenu() {
           <div class="item-top">
             <h2>
               ${item.name}
-              ${sold ? '<span class="badge">Hết</span>' : ""}
+              ${sold ? '<span class="badge">売り切れ</span>' : ""}
             </h2>
-            <div class="base-price">Giá gốc ${formatVnd(item.basePrice)}</div>
+            <div class="base-price">基本価格 ${formatVnd(item.basePrice)}</div>
           </div>
           <div class="options">
             <div class="opt-row">
-              <span class="opt-label">Size</span>
+              <span class="opt-label">サイズ</span>
               <label><input type="radio" name="size-${item.id}" value="S" checked /> S</label>
               <label><input type="radio" name="size-${item.id}" value="M" /> M (+5.000đ)</label>
               <label><input type="radio" name="size-${item.id}" value="L" /> L (+10.000đ)</label>
             </div>
             <div class="opt-row">
-              <span class="opt-label">Topping</span>
-              <label><input type="checkbox" name="topping-${item.id}" value="trân châu" /> Trân châu (+5.000đ)</label>
-              <label><input type="checkbox" name="topping-${item.id}" value="kem cheese" /> Kem cheese (+10.000đ)</label>
+              <span class="opt-label">トッピング</span>
+              <label><input type="checkbox" name="topping-${item.id}" value="タピオカ" /> タピオカ (+5.000đ)</label>
+              <label><input type="checkbox" name="topping-${item.id}" value="チーズクリーム" /> チーズクリーム (+10.000đ)</label>
             </div>
           </div>
           <div class="item-foot">
-            <div class="live-price">Tạm tính: <span id="live-${item.id}">${formatVnd(item.basePrice)}</span></div>
+            <div class="live-price">小計: <span id="live-${item.id}">${formatVnd(item.basePrice)}</span></div>
             <button
               type="button"
               class="btn-add"
               data-add="${item.id}"
               ${sold ? "disabled" : ""}
-            >${sold ? "Hết" : "Thêm vào giỏ"}</button>
+            >${sold ? "売り切れ" : "カートに入れる"}</button>
           </div>
         </div>
       </article>
@@ -242,7 +242,7 @@ function parseQuantityInput(raw) {
 function renderCart() {
   const el = document.getElementById("cart-content");
   if (!cart.length) {
-    el.innerHTML = '<p class="cart-empty">Giỏ đang trống.</p>';
+    el.innerHTML = '<p class="cart-empty">カートは空です。</p>';
     return;
   }
 
@@ -253,7 +253,7 @@ function renderCart() {
           const quantity = normalizeQuantity(line.quantity);
           const toppingText = line.toppings.length
             ? line.toppings.join(", ")
-            : "không topping";
+            : "トッピングなし";
           const errorHtml =
             qtyErrorLineId === line.lineId
               ? `<p class="qty-error">${QTY_ERROR}</p>`
@@ -263,22 +263,22 @@ function renderCart() {
               <div class="cart-line-main">
                 <div>
                   <p class="cart-line-title">${line.emoji} ${line.name}</p>
-                  <p class="cart-line-meta">Size ${line.size} · ${toppingText}</p>
+                  <p class="cart-line-meta">サイズ ${line.size} · ${toppingText}</p>
                 </div>
                 <div class="cart-line-price">${formatVnd(lineTotal(line))}</div>
               </div>
               <div class="qty-row">
-                <button type="button" class="btn-qty" data-dec="${line.lineId}" aria-label="Giảm">−</button>
+                <button type="button" class="btn-qty" data-dec="${line.lineId}" aria-label="減らす">−</button>
                 <input
                   class="qty-input"
                   type="text"
                   inputmode="numeric"
                   value="${quantity}"
                   data-qty="${line.lineId}"
-                  aria-label="Số lượng"
+                  aria-label="数量"
                 />
-                <button type="button" class="btn-qty" data-inc="${line.lineId}" aria-label="Tăng">+</button>
-                <button type="button" class="btn-remove" data-remove="${line.lineId}">Bỏ</button>
+                <button type="button" class="btn-qty" data-inc="${line.lineId}" aria-label="増やす">+</button>
+                <button type="button" class="btn-remove" data-remove="${line.lineId}">削除</button>
               </div>
               ${errorHtml}
             </li>
@@ -287,7 +287,7 @@ function renderCart() {
         .join("")}
     </ul>
     <div class="cart-total">
-      <span>Tổng tiền</span>
+      <span>合計</span>
       <strong>${formatVnd(cartTotal())}</strong>
     </div>
   `;
@@ -378,7 +378,7 @@ function placeOrder(customerName, tableNumber) {
       quantity: normalizeQuantity(line.quantity),
     })),
     total: cartTotal(),
-    status: "Chờ pha",
+    status: "調理待ち",
   };
   orders.push(order);
   saveOrders(orders);
@@ -394,9 +394,9 @@ function initOrderForm() {
     const name = document.getElementById("customer-name").value.trim();
     const table = document.getElementById("table-number").value.trim();
     const problems = [];
-    if (!cart.length) problems.push("Giỏ đang trống.");
-    if (!name) problems.push("Nhập tên người gọi.");
-    if (!table) problems.push("Nhập số bàn.");
+    if (!cart.length) problems.push("カートは空です。");
+    if (!name) problems.push("お名前を入力してください。");
+    if (!table) problems.push("テーブル番号を入力してください。");
     if (problems.length) {
       errorEl.hidden = false;
       errorEl.textContent = problems.join(" ");
