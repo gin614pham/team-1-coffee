@@ -284,6 +284,54 @@ button {
   white-space: nowrap;
 }
 
+.qty-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.btn-qty {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: #e8f1f0;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.btn-qty:hover {
+  background: #d7e7e4;
+}
+
+.qty-input {
+  width: 3rem;
+  height: 2rem;
+  text-align: center;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 0 0.25rem;
+}
+
+.qty-input:focus {
+  outline: 2px solid var(--accent);
+  border-color: var(--accent);
+}
+
+.qty-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 .cart-total {
   margin-top: 1.15rem;
   padding-top: 1rem;
