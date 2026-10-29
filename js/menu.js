@@ -56,6 +56,7 @@ const MENU = [
 ];
 
 const CART_KEY = "coffee-cart";
+const ORDERS_KEY = "coffee-orders";
 
 function formatVnd(amount) {
   return amount.toLocaleString("vi-VN") + "đ";
@@ -220,5 +221,81 @@ function renderCart() {
   });
 }
 
+function loadOrders() {
+  try {
+    const raw = localStorage.getItem(ORDERS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveOrders(orders) {
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+}
+
+function createOrderId(orders) {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let id;
+  do {
+    id = "";
+    for (let i = 0; i < 4; i += 1) {
+      id += alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+  } while (orders.some((order) => order.id === id));
+  return id;
+}
+
+function placeOrder(customerName, tableNumber) {
+  const orders = loadOrders();
+  const order = {
+    id: createOrderId(orders),
+    customerName,
+    tableNumber,
+    lines: cart.map((line) => ({
+      lineId: line.lineId,
+      itemId: line.itemId,
+      name: line.name,
+      emoji: line.emoji,
+      size: line.size,
+      toppings: [...line.toppings],
+      price: line.price,
+    })),
+    total: cartTotal(),
+    status: "Chờ pha",
+  };
+  orders.push(order);
+  saveOrders(orders);
+  return order;
+}
+
+function initOrderForm() {
+  const form = document.getElementById("order-form");
+  const errorEl = document.getElementById("order-error");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = document.getElementById("customer-name").value.trim();
+    const table = document.getElementById("table-number").value.trim();
+    const problems = [];
+    if (!cart.length) problems.push("Giỏ đang trống.");
+    if (!name) problems.push("Nhập tên người gọi.");
+    if (!table) problems.push("Nhập số bàn.");
+    if (problems.length) {
+      errorEl.hidden = false;
+      errorEl.textContent = problems.join(" ");
+      return;
+    }
+
+    errorEl.hidden = true;
+    errorEl.textContent = "";
+    const order = placeOrder(name, table);
+    window.location.href = "order.html?id=" + encodeURIComponent(order.id);
+  });
+}
+
 renderMenu();
 renderCart();
+initOrderForm();

@@ -299,3 +299,102 @@ button {
   color: var(--accent);
   font-size: 1.25rem;
 }
+
+.order-form {
+  margin-top: 1.25rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.order-form h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.35rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.field input {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.field input:focus {
+  outline: 2px solid var(--accent);
+  border-color: var(--accent);
+}
+
+.order-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.btn-order {
+  border-radius: 999px;
+  padding: 0.7rem 1.1rem;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.btn-order:hover {
+  background: var(--accent-hover);
+}
+
+.order-card {
+  max-width: 36rem;
+  padding: 1.25rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+.order-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.order-code,
+.order-meta,
+.status-badge {
+  margin: 0;
+}
+
+.order-code strong {
+  font-family: var(--display);
+  font-size: 1.45rem;
+}
+
+.order-meta {
+  color: var(--muted);
+}
+
+.status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #e4f0e6;
+  color: var(--accent);
+  font-weight: 700;
+}

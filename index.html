@@ -13,7 +13,7 @@
   <div class="wrap">
     <header>
       <h1>Thực đơn</h1>
-      <p>Chọn size và topping, xem giá tạm tính rồi thêm vào giỏ.</p>
+      <p>Chọn size và topping, thêm vào giỏ, rồi nhập tên và số bàn để đặt.</p>
     </header>
 
     <div class="layout">
@@ -21,6 +21,19 @@
       <aside class="cart" aria-label="Giỏ hàng">
         <h2>Giỏ hàng</h2>
         <div id="cart-content"></div>
+        <form id="order-form" class="order-form">
+          <h2>Đặt món</h2>
+          <label class="field">
+            Tên người gọi
+            <input id="customer-name" name="customerName" type="text" autocomplete="name" />
+          </label>
+          <label class="field">
+            Số bàn
+            <input id="table-number" name="tableNumber" type="text" inputmode="numeric" autocomplete="off" />
+          </label>
+          <p id="order-error" class="order-error" hidden></p>
+          <button type="submit" class="btn-order">Đặt</button>
+        </form>
       </aside>
     </div>
   </div>
