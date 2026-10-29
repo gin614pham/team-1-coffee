@@ -70,12 +70,23 @@ function calcPrice(basePrice, size, toppings) {
   return basePrice + (SIZE_EXTRA[size] || 0) + toppingSum;
 }
 
+const QTY_ERROR = "数量は0より大きくしてください";
+
+function normalizeQuantity(value) {
+  return Number.isInteger(value) && value >= 1 ? value : 1;
+}
+
 function loadCart() {
   try {
     const raw = localStorage.getItem(CART_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((line) => ({
+      ...line,
+      toppings: Array.isArray(line.toppings) ? line.toppings : [],
+      quantity: normalizeQuantity(line.quantity),
+    }));
   } catch {
     return [];
   }
@@ -85,7 +96,24 @@ function saveCart(cart) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
+function toppingKey(toppings) {
+  return [...toppings].sort().join("\0");
+}
+
+function isSameCartLine(a, b) {
+  return (
+    a.itemId === b.itemId &&
+    a.size === b.size &&
+    toppingKey(a.toppings) === toppingKey(b.toppings)
+  );
+}
+
+function lineTotal(line) {
+  return line.price * normalizeQuantity(line.quantity);
+}
+
 let cart = loadCart();
+let qtyErrorLineId = null;
 
 function getItemState(itemId) {
   const root = document.querySelector(`[data-item-id="${itemId}"]`);
@@ -158,15 +186,24 @@ function renderMenu() {
       if (!item || !item.available) return;
       const { size, toppings } = getItemState(item.id);
       const price = calcPrice(item.basePrice, size, toppings);
-      cart.push({
-        lineId: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-        itemId: item.id,
-        name: item.name,
-        emoji: item.emoji,
-        size,
-        toppings: [...toppings],
-        price,
-      });
+      const match = cart.find((line) =>
+        isSameCartLine(line, { itemId: item.id, size, toppings })
+      );
+      if (match) {
+        match.quantity = normalizeQuantity(match.quantity) + 1;
+      } else {
+        cart.push({
+          lineId: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+          itemId: item.id,
+          name: item.name,
+          emoji: item.emoji,
+          size,
+          toppings: [...toppings],
+          price,
+          quantity: 1,
+        });
+      }
+      qtyErrorLineId = null;
       saveCart(cart);
       renderCart();
     });
@@ -174,7 +211,32 @@ function renderMenu() {
 }
 
 function cartTotal() {
-  return cart.reduce((sum, line) => sum + line.price, 0);
+  return cart.reduce((sum, line) => sum + lineTotal(line), 0);
+}
+
+function showQtyError(lineId) {
+  qtyErrorLineId = lineId;
+  renderCart();
+}
+
+function setLineQuantity(lineId, nextQty) {
+  const line = cart.find((item) => item.lineId === lineId);
+  if (!line) return;
+  if (!Number.isInteger(nextQty) || nextQty < 1) {
+    showQtyError(lineId);
+    return;
+  }
+  line.quantity = nextQty;
+  qtyErrorLineId = null;
+  saveCart(cart);
+  renderCart();
+}
+
+function parseQuantityInput(raw) {
+  const trimmed = String(raw).trim();
+  if (!trimmed) return null;
+  if (!/^\d+$/.test(trimmed)) return null;
+  return Number(trimmed);
 }
 
 function renderCart() {
@@ -188,9 +250,14 @@ function renderCart() {
     <ul class="cart-list">
       ${cart
         .map((line) => {
+          const quantity = normalizeQuantity(line.quantity);
           const toppingText = line.toppings.length
             ? line.toppings.join(", ")
             : "không topping";
+          const errorHtml =
+            qtyErrorLineId === line.lineId
+              ? `<p class="qty-error">${QTY_ERROR}</p>`
+              : "";
           return `
             <li class="cart-line">
               <div class="cart-line-main">
@@ -198,9 +265,22 @@ function renderCart() {
                   <p class="cart-line-title">${line.emoji} ${line.name}</p>
                   <p class="cart-line-meta">Size ${line.size} · ${toppingText}</p>
                 </div>
-                <div class="cart-line-price">${formatVnd(line.price)}</div>
+                <div class="cart-line-price">${formatVnd(lineTotal(line))}</div>
               </div>
-              <button type="button" class="btn-remove" data-remove="${line.lineId}">Bỏ</button>
+              <div class="qty-row">
+                <button type="button" class="btn-qty" data-dec="${line.lineId}" aria-label="Giảm">−</button>
+                <input
+                  class="qty-input"
+                  type="text"
+                  inputmode="numeric"
+                  value="${quantity}"
+                  data-qty="${line.lineId}"
+                  aria-label="Số lượng"
+                />
+                <button type="button" class="btn-qty" data-inc="${line.lineId}" aria-label="Tăng">+</button>
+                <button type="button" class="btn-remove" data-remove="${line.lineId}">Bỏ</button>
+              </div>
+              ${errorHtml}
             </li>
           `;
         })
@@ -215,8 +295,41 @@ function renderCart() {
   el.querySelectorAll("[data-remove]").forEach((btn) => {
     btn.addEventListener("click", () => {
       cart = cart.filter((line) => line.lineId !== btn.dataset.remove);
+      qtyErrorLineId = null;
       saveCart(cart);
       renderCart();
+    });
+  });
+
+  el.querySelectorAll("[data-inc]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const line = cart.find((item) => item.lineId === btn.dataset.inc);
+      if (!line) return;
+      setLineQuantity(line.lineId, normalizeQuantity(line.quantity) + 1);
+    });
+  });
+
+  el.querySelectorAll("[data-dec]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const line = cart.find((item) => item.lineId === btn.dataset.dec);
+      if (!line) return;
+      const quantity = normalizeQuantity(line.quantity);
+      if (quantity <= 1) {
+        showQtyError(line.lineId);
+        return;
+      }
+      setLineQuantity(line.lineId, quantity - 1);
+    });
+  });
+
+  el.querySelectorAll("[data-qty]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const parsed = parseQuantityInput(input.value);
+      if (parsed === null || parsed < 1) {
+        showQtyError(input.dataset.qty);
+        return;
+      }
+      setLineQuantity(input.dataset.qty, parsed);
     });
   });
 }
@@ -262,6 +375,7 @@ function placeOrder(customerName, tableNumber) {
       size: line.size,
       toppings: [...line.toppings],
       price: line.price,
+      quantity: normalizeQuantity(line.quantity),
     })),
     total: cartTotal(),
     status: "Chờ pha",

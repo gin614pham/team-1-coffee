@@ -51,14 +51,17 @@ function renderOrder() {
     .map((line) => {
       const toppings = Array.isArray(line.toppings) ? line.toppings : [];
       const toppingText = toppings.length ? toppings.join(", ") : "không topping";
+      const quantity =
+        Number.isInteger(line.quantity) && line.quantity >= 1 ? line.quantity : 1;
+      const amount = line.price * quantity;
       return `
         <li class="cart-line">
           <div class="cart-line-main">
             <div>
               <p class="cart-line-title">${escapeHtml(line.emoji)} ${escapeHtml(line.name)}</p>
-              <p class="cart-line-meta">Size ${escapeHtml(line.size)} · ${escapeHtml(toppingText)}</p>
+              <p class="cart-line-meta">Size ${escapeHtml(line.size)} · ${escapeHtml(toppingText)} · ×${quantity}</p>
             </div>
-            <div class="cart-line-price">${formatVnd(line.price)}</div>
+            <div class="cart-line-price">${formatVnd(amount)}</div>
           </div>
         </li>
       `;
