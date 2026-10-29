@@ -23,6 +23,19 @@ function loadOrders() {
   }
 }
 
+function saveOrders(orders) {
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+}
+
+function cancelOrder(orderId) {
+  const orders = loadOrders();
+  const order = orders.find((item) => item.id === orderId);
+  if (!order || order.status !== "Chờ pha") return;
+  order.status = "Đã hủy";
+  saveOrders(orders);
+  renderOrder();
+}
+
 function renderOrder() {
   const root = document.getElementById("order-status");
   const id = new URLSearchParams(window.location.search).get("id");
@@ -64,8 +77,15 @@ function renderOrder() {
         <span>Tổng tiền</span>
         <strong>${formatVnd(order.total)}</strong>
       </div>
+      <button type="button" class="btn-cancel" data-cancel="${escapeHtml(order.id)}">
+        Hủy
+      </button>
     </article>
   `;
+
+  root.querySelector("[data-cancel]").addEventListener("click", () => {
+    cancelOrder(root.querySelector("[data-cancel]").dataset.cancel);
+  });
 }
 
 renderOrder();

@@ -39,7 +39,7 @@ function nextStatus(current) {
 function advanceOrder(orderId) {
   const orders = loadOrders();
   const order = orders.find((item) => item.id === orderId);
-  if (!order) return;
+  if (!order || order.status === "Đã hủy") return;
   order.status = nextStatus(order.status);
   saveOrders(orders);
   renderCounter();

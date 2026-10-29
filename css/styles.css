@@ -419,3 +419,20 @@ button {
   background: var(--accent-hover);
   transform: translateY(-1px);
 }
+
+.btn-cancel {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 0.65rem 1.1rem;
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid #e4c4bd;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-cancel:hover {
+  background: #f8ece9;
+  transform: translateY(-1px);
+}
